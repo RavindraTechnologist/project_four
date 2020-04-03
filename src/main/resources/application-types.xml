@@ -1,68 +1,51 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
   <types:catalog>
-    <types:type name="output_json" format="json">
-      <types:shape format="weave" example="examples/book_output.json"><![CDATA[%dw 2.0
+    <types:type name="input_json_example" format="json">
+      <types:shape format="weave" example="examples/assignment3_json-2.json"><![CDATA[%dw 2.0
 
-type output_json = {|
-  patents: Array<{|    categories: String,     owner: String  |}>
-|} {"example": "{\\\"patents\\\":[{\\\"categories\\\":\\\"book\\\",\\\"owner\\\":\\\"luis\\\"},{\\\"categories\\\":\\\"CD\\\",\\\"owner\\\":\\\"victor\\\"},{\\\"categories\\\":\\\"book\\\",\\\"owner\\\":\\\"battler\\\"},{\\\"categories\\\":\\\"CD\\\",\\\"owner\\\":\\\"The beatles\\\"}]}"}
-
-]]></types:shape>
-    </types:type>
-    <types:type name="popualtion_input_json" format="json">
-      <types:shape format="weave" example="examples/population_input.json"><![CDATA[%dw 2.0
-
-type popualtion_input_json = {|
-  hyderabad: {|
-    population: String, 
-    state: String, 
-    level: String, 
-    indexpoints: String
-  |}, 
-  bhuvneshwar: {|
-    population: String, 
-    state: String, 
-    level: String, 
-    indexpoints: String
-  |}
-|} {"example": "{\\\"hyderabad\\\":{\\\"population\\\":\\\"9 millions\\\",\\\"state\\\":\\\"Telangana\\\",\\\"level\\\":\\\"1\\\",\\\"indexpoints\\\":\\\"8\\\"},\\\"bhuvneshwar\\\":{\\\"population\\\":\\\"3 millions\\\",\\\"state\\\":\\\"Orissa\\\",\\\"level\\\":\\\"3\\\",\\\"indexpoints\\\":\\\"5\\\"}}"}
+type input_json_example = {|
+  data: Array<{|    Name: String,     accno: String,     age: String,     ssn: String  |}>
+|} {"example": "{\\\"data\\\":[{\\\"Name\\\":\\\"Srinivas\\\",\\\"accno\\\":\\\"1234567\\\",\\\"age\\\":\\\"30\\\",\\\"ssn\\\":\\\"1234567\\\"}]}"}
 
 ]]></types:shape>
     </types:type>
-    <types:type name="book_input" format="json">
-      <types:shape format="weave" example="examples/book_input-3.json"><![CDATA[%dw 2.0
+    <types:type name="output_json_example" format="json">
+      <types:shape format="weave" example="examples/assignment3_json-3.json"><![CDATA[%dw 2.0
 
-type book_input = {|
-  items: Array<{|    typeOf: String,     label: Array<Array<String>>, 
-    author: String
-  |}>
-|} {"example": "{\\\"items\\\":[{\\\"typeOf\\\":\\\"book\\\",\\\"label\\\":[[\\\"java\\\",\\\"eng\\\"],[\\\"eng\\\"]],\\\"author\\\":\\\"luis\\\"},{\\\"typeOf\\\":\\\"CD\\\",\\\"label\\\":[[\\\"mule\\\",\\\"eng\\\"],[\\\"eng\\\"]],\\\"author\\\":\\\"victor\\\"},{\\\"typeOf\\\":\\\"book\\\",\\\"label\\\":[[\\\"php\\\",\\\"eng\\\"],[\\\"eng\\\"]],\\\"author\\\":\\\"battler\\\"},{\\\"typeOf\\\":\\\"CD\\\",\\\"label\\\":[[\\\"spring\\\",\\\"eng\\\"],[\\\"eng\\\"]],\\\"author\\\":\\\"The beatles\\\"}]}"}
+type output_json_example = {|
+  data: Array<{|    Name: String,     accno: String,     age: String,     ssn: String  |}>
+|} {"example": "{\\\"data\\\":[{\\\"Name\\\":\\\"Srinivas\\\",\\\"accno\\\":\\\"1234567\\\",\\\"age\\\":\\\"30\\\",\\\"ssn\\\":\\\"1234567\\\"}]}"}
 
 ]]></types:shape>
     </types:type>
   </types:catalog>
-  <types:enrichment select="#231cb33c-15ec-4776-8973-864dd2da49d2">
+  <types:enrichment select="#58136701-d571-4b68-b728-835b45297bb8">
     <types:processor-declaration>
       <types:input-event>
         <types:message>
-          <types:payload type="book_input"/>
+          <types:payload type="input_json_example"/>
         </types:message>
       </types:input-event>
       <types:output-event>
         <types:message>
-          <types:payload type="output_json"/>
+          <types:payload type="output_json_example"/>
         </types:message>
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
-  <types:enrichment select="#99cc07c2-6b94-4edf-a03e-950f242015e6">
+  <types:enrichment select="#c0fdc165-acd6-4092-a9d8-e9f4956d527e">
     <types:processor-declaration>
       <types:input-event>
         <types:message>
-          <types:payload type="popualtion_input_json"/>
+          <types:payload type="input_json_example"/>
         </types:message>
       </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output_json_example"/>
+        </types:message>
+      </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
 </types:mule>
