@@ -1,0 +1,14 @@
+{
+	"emp1": {
+		"name": "Ravindra",
+		"designation": "AL2",
+		"skillset": "Java",
+		"experience": "5 years"
+	},
+	"emp2": {
+		"name": "Ram",
+		"designation": "SAL2",
+		"skillset": "C",
+		"experience": "8 years"
+	}
+}

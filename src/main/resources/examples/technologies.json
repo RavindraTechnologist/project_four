@@ -1,0 +1,20 @@
+{
+	"technologies": [
+		{
+			"name": "java",
+			"inventor": "James Gosling"
+		},
+		{
+			"categories": "C#",
+			"owner": "Microsoft Corporation"
+		},
+		{
+			"categories": "C",
+			"owner": "Dennis Ritchie"
+		},
+		{
+			"categories": "Python",
+			"owner": "Guido van Rossum"
+		}
+	]
+}
