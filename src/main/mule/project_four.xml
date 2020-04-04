@@ -10,29 +10,66 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d2aee5bc-c25f-4b77-b9a9-baa6841e2ecc" >
-		<http:request-connection host="reqres.in" port="80" />
+		<http:request-connection port="8081" />
 	</http:request-config>
 	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="3a33b8ed-4671-46e4-ae66-712e6fbdef3c" >
 		<wsc:connection wsdlLocation="http://dneonline.com/calculator.asmx?wsdl" service="Calculator" port="CalculatorSoap" address="http://dneonline.com/calculator.asmx" />
 	</wsc:config>
 	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="b9e1043b-a4c9-497b-aecf-b804ae9dcddb" >
-		<http:request-connection host="americanflightsdemo.us-e2.cloudhub.io" port="80" />
+		<http:request-connection port="8081" />
 	</http:request-config>
 	<flow name="REST_API_Flow" doc:id="36fb2cdf-8a79-420f-a650-cc052ff2c0f1">
-		<http:listener doc:name="Listener" doc:id="cc154a97-81a7-4288-8c42-04abc9421fb9" config-ref="HTTP_Listener_config" path="/flightsUsingService" />
-		<logger level="INFO" doc:name="Logger" doc:id="2c0b789b-247c-4161-8967-f218ecd31ac7" message="Flights api started" />
-		<http:request method="GET" doc:name="Request" doc:id="5f7854ef-bd53-4aa3-aef8-77b9dfe05fbf" config-ref="HTTP_Request_configuration1" path="/flights" />
-		<logger level="INFO" doc:name="Logger" doc:id="c5aa207f-d5c0-4dba-948b-3a6307a3882e" />
+		<http:listener doc:name="Listener" doc:id="cc154a97-81a7-4288-8c42-04abc9421fb9" config-ref="HTTP_Listener_config" path="/restapi" />
+		<logger level="INFO" doc:name="Logger" doc:id="2c0b789b-247c-4161-8967-f218ecd31ac7" message="API Request Started"/>
+		<http:request method="GET" doc:name="Request" doc:id="5f7854ef-bd53-4aa3-aef8-77b9dfe05fbf" config-ref="HTTP_Request_configuration1" path="/api" />
+		<logger level="INFO" doc:name="Logger" doc:id="c5aa207f-d5c0-4dba-948b-3a6307a3882e" message="API Request Completed"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f2e39981-89ad-4eed-93ce-7e229ed9ffee" type="HTTP:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="e743d765-16f2-4a5b-bac0-eb8c5e8e9821" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 	<flow name="REST_Flow" doc:id="7f5ec94b-092c-4476-884b-05fa4b9164b4" >
-		<http:listener doc:name="Listener" doc:id="c71c382b-4328-4db0-9fc1-3f0ba83ee1a1" config-ref="HTTP_Listener_config" path="/users" allowedMethods="POST"/>
-		<set-variable value="#[payload.inputNumber]" doc:name="Set Variable" doc:id="b193963b-44bb-4479-a20b-d703245ab267" variableName="userId"/>
-		<logger level="INFO" doc:name="Logger" doc:id="089b02f5-2f8d-4336-b770-b45eeab144b3" message="Api started"/>
-		<http:request method="GET" doc:name="Request" doc:id="fea3f53f-81e4-492e-af2f-782bfe90c8fd" config-ref="HTTP_Request_configuration" path="#['/api/user/'++ vars.userId as String]"/>
+		<http:listener doc:name="Listener" doc:id="c71c382b-4328-4db0-9fc1-3f0ba83ee1a1" config-ref="HTTP_Listener_config" path="/restflow" allowedMethods="POST"/>
+		<set-variable value="#[payload.input1]" doc:name="Set Variable" doc:id="b193963b-44bb-4479-a20b-d703245ab267" variableName="var1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="089b02f5-2f8d-4336-b770-b45eeab144b3"/>
+		<http:request method="GET" doc:name="Request" doc:id="fea3f53f-81e4-492e-af2f-782bfe90c8fd" config-ref="HTTP_Request_configuration" path="#['/api/restflow/'++ vars.var1 as String]"/>
 		<logger level="INFO" doc:name="Logger" doc:id="2bcc8fa0-42e8-418f-9d64-74f7fe2a1b43" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="801ae45d-e021-4720-90e1-2b40de540126" type="HTTP:CONNECTIVITY, HTTP:PARSING">
+				<ee:transform doc:name="Transform Message" doc:id="08c3e65c-8cb1-4015-b5c7-b1c378ad4afa" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="d79dba01-1fea-41a0-b9db-9f2fd4263197" type="HTTP:SERVICE_UNAVAILABLE">
+				<ee:transform doc:name="Transform Message" doc:id="97ba078a-00ca-448b-9fc4-97b4a2a2cbf3" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
 	</flow>
-	<flow name="SOAP_Flow" doc:id="73f0fdde-fc0a-4055-8cb4-62d33f035330">
-		<http:listener doc:name="Listener" doc:id="41678664-caf5-4d73-a2bc-55b8e2db4015" config-ref="HTTP_Listener_config" path="/convert" />
+	<flow name="SOAP_Multiplication_Operation_Flow" doc:id="73f0fdde-fc0a-4055-8cb4-62d33f035330">
+		<http:listener doc:name="Listener" doc:id="41678664-caf5-4d73-a2bc-55b8e2db4015" config-ref="HTTP_Listener_config" path="/soapapi" />
 		<ee:transform doc:name="Transform Message" doc:id="b6b13278-b5b6-428a-a6fe-cb509947215b">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -40,14 +77,14 @@ output application/xml
 ns ns0 http://tempuri.org/
 ---
 {
-	ns0#Add: {
-		ns0#intA: payload.inputNumberFirst,
-		ns0#intB: payload.inputNumberSecond
+	ns0#Multiply: {
+		ns0#intA: payload.input1,
+		ns0#intB: payload.input2
 	}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<wsc:consume doc:name="Consume" doc:id="7f1977d5-8c80-479a-ae2e-14aa2adc015c" config-ref="Web_Service_Consumer_Config" operation="Add" />
+		<wsc:consume doc:name="Consume" doc:id="7f1977d5-8c80-479a-ae2e-14aa2adc015c" config-ref="Web_Service_Consumer_Config" operation="Multiply" />
 		<ee:transform doc:name="Transform Message" doc:id="8984a643-e89b-44a4-b7da-60f5550cfc96">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -59,5 +96,104 @@ output application/xml
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="03500310-1013-4205-b031-9eb66bae6202" />
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1cf1a274-c528-46a4-9171-4b6f58971634" type="WSC:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="7a9f559e-89b5-469c-8e1f-9e1bd59d44aa" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="58a78d11-ba56-4f46-8cdb-509198e53d32" type="STREAM_MAXIMUM_SIZE_EXCEEDED">
+				<ee:transform doc:name="Transform Message" doc:id="1f00e983-1f1d-43ec-851b-2dbe7f9e441c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ee89ab14-e088-4641-b210-be3a4611e0a6" type="EXPRESSION">
+				<ee:transform doc:name="Transform Message" doc:id="e429556f-3b66-46ab-bff1-c7b9894c9888" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="SOAP_Add_Operation_Flow" doc:id="9244a8fc-ff66-4012-9c2f-de2a78b2590b" >
+		<http:listener doc:name="Listener" doc:id="cc808cfa-873a-46ab-a50b-a6db5ac08c6c" config-ref="HTTP_Listener_config" path="/soapaddapi" />
+		<ee:transform doc:name="Transform Message" doc:id="e3002afc-5d85-4aac-8b93-5f9650a43667" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://tempuri.org/
+---
+{
+	ns0#Add: {
+		ns0#intA: payload.input1,
+		ns0#intB: payload.input2
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="Add" doc:name="Consume" doc:id="6b913bb7-2bac-441d-b8ef-967cd94d0ca7" config-ref="Web_Service_Consumer_Config" />
+		<ee:transform doc:name="Transform Message" doc:id="afd8b56d-cd24-4bb1-b061-4bb99e0929c4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	result: payload.body
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c0314117-52c3-4fb5-9774-e676a6079e0a" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7ee42507-cc04-48a4-aa9d-a190e0d6520c" type="WSC:BAD_REQUEST" >
+				<ee:transform doc:name="Transform Message" doc:id="0cd6f150-11cc-46d6-ac83-a45facb3d469" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0e557e08-488a-46c9-8947-48cc16a9538c" type="STREAM_MAXIMUM_SIZE_EXCEEDED" >
+				<ee:transform doc:name="Transform Message" doc:id="8970553b-7981-41d1-bc4b-9eb6e3ffdca9" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="250db000-e391-477c-a300-8a6e10ba5231" type="EXPRESSION" >
+				<ee:transform doc:name="Transform Message" doc:id="33b6e4b1-1833-45e3-a447-a840076f4682" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 </mule>

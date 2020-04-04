@@ -48,4 +48,5 @@ type output_json_example = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#b6b13278-b5b6-428a-a6fe-cb509947215b"/>
 </types:mule>
